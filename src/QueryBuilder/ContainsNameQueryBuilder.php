@@ -15,6 +15,7 @@ namespace BitBag\SyliusElasticsearchPlugin\QueryBuilder;
 use BitBag\SyliusElasticsearchPlugin\PropertyNameResolver\ConcatedNameResolverInterface;
 use Elastica\Query\AbstractQuery;
 use Elastica\Query\Match;
+use Elastica\Query\MatchQuery;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 
 final class ContainsNameQueryBuilder implements QueryBuilderInterface
@@ -47,7 +48,7 @@ final class ContainsNameQueryBuilder implements QueryBuilderInterface
             return null;
         }
 
-        $nameQuery = new Match();
+        $nameQuery = new MatchQuery();
 
         $nameQuery->setFieldQuery($propertyName, $name);
         $nameQuery->setFieldFuzziness($propertyName, 2);
