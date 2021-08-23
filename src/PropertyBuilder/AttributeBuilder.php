@@ -15,7 +15,7 @@ namespace BitBag\SyliusElasticsearchPlugin\PropertyBuilder;
 use BitBag\SyliusElasticsearchPlugin\Formatter\StringFormatterInterface;
 use BitBag\SyliusElasticsearchPlugin\PropertyNameResolver\ConcatedNameResolverInterface;
 use Elastica\Document;
-use FOS\ElasticaBundle\Event\TransformEvent;
+use FOS\ElasticaBundle\Event\AbstractTransformEvent;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 
@@ -40,7 +40,7 @@ final class AttributeBuilder extends AbstractBuilder
         $this->localeContext = $localeContext;
     }
 
-    public function consumeEvent(TransformEvent $event): void
+    public function consumeEvent(AbstractTransformEvent $event): void
     {
         $this->buildProperty($event, ProductInterface::class,
             function (ProductInterface $product, Document $document): void {

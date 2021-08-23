@@ -14,7 +14,7 @@ namespace BitBag\SyliusElasticsearchPlugin\PropertyBuilder;
 
 use BitBag\SyliusElasticsearchPlugin\PropertyBuilder\Mapper\ProductTaxonsMapperInterface;
 use BitBag\SyliusElasticsearchPlugin\Repository\ProductVariantRepositoryInterface;
-use FOS\ElasticaBundle\Event\TransformEvent;
+use FOS\ElasticaBundle\Event\AbstractTransformEvent;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
@@ -56,7 +56,7 @@ final class OptionTaxonsBuilder extends AbstractBuilder
         $this->excludedOptions = $excludedOptions;
     }
 
-    public function consumeEvent(TransformEvent $event): void
+    public function consumeEvent(AbstractTransformEvent $event): void
     {
         $documentProductOption = $event->getObject();
 

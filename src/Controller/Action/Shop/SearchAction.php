@@ -11,13 +11,13 @@ use BitBag\SyliusElasticsearchPlugin\Model\Search;
 use BitBag\SyliusElasticsearchPlugin\QueryBuilder\QueryBuilderInterface;
 use Elastica\Query;
 use FOS\ElasticaBundle\Finder\PaginatedFinderInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 final class SearchAction
 {
-    /** @var EngineInterface */
+    /** @var Environment */
     private $templatingEngine;
 
     /** @var PaginatedFinderInterface */
@@ -36,7 +36,7 @@ final class SearchAction
     private $paginationDataHandler;
 
     public function __construct(
-        EngineInterface $templatingEngine,
+        Environment $templatingEngine,
         PaginatedFinderInterface $finder,
         SearchFormEventListener $searchFormEventListener,
         RegistryInterface $facetRegistry,
@@ -85,9 +85,11 @@ final class SearchAction
             $results->setMaxPerPage($paginationData[PaginationDataHandlerInterface::LIMIT_INDEX]);
         }
 
-        return $this->templatingEngine->renderResponse(
-            $template,
-            ['results' => $results, 'searchForm' => $form->createView()]
+        return new Response(
+            $this->templatingEngine->render(
+                $template,
+                ['results' => $results, 'searchForm' => $form->createView()]
+            )
         );
     }
 }

@@ -17,10 +17,10 @@ use BitBag\SyliusElasticsearchPlugin\Controller\RequestDataHandler\PaginationDat
 use BitBag\SyliusElasticsearchPlugin\Controller\RequestDataHandler\SortDataHandlerInterface;
 use BitBag\SyliusElasticsearchPlugin\Finder\ShopProductsFinderInterface;
 use BitBag\SyliusElasticsearchPlugin\Form\Type\ShopProductsFilterType;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twig\Environment;
 
 final class ListProductsAction
 {
@@ -39,7 +39,7 @@ final class ListProductsAction
     /** @var ShopProductsFinderInterface */
     private $shopProductsFinder;
 
-    /** @var EngineInterface */
+    /** @var Environment */
     private $templatingEngine;
 
     public function __construct(
@@ -48,19 +48,19 @@ final class ListProductsAction
         SortDataHandlerInterface $shopProductsSortDataHandler,
         PaginationDataHandlerInterface $paginationDataHandler,
         ShopProductsFinderInterface $shopProductsFinder,
-        EngineInterface $templatingEngine
+        Environment $twig
     ) {
         $this->formFactory = $formFactory;
         $this->shopProductListDataHandler = $shopProductListDataHandler;
         $this->shopProductsSortDataHandler = $shopProductsSortDataHandler;
         $this->paginationDataHandler = $paginationDataHandler;
         $this->shopProductsFinder = $shopProductsFinder;
-        $this->templatingEngine = $templatingEngine;
+        $this->templatingEngine = $twig;
     }
 
     public function __invoke(Request $request): Response
     {
-        $form = $this->formFactory->createNamed(null, ShopProductsFilterType::class);
+        $form = $this->formFactory->createNamed('', ShopProductsFilterType::class);
         $form->handleRequest($request);
 
         $requestData = array_merge(
@@ -77,10 +77,15 @@ final class ListProductsAction
         $template = $request->get('template');
         $products = $this->shopProductsFinder->find($data);
 
-        return $this->templatingEngine->renderResponse($template, [
-            'form' => $form->createView(),
-            'products' => $products,
-            'taxon' => $data['taxon'],
-        ]);
+        return new Response(
+            $this->templatingEngine->render(
+                $template,
+                [
+                    'form' => $form->createView(),
+                    'products' => $products,
+                    'taxon' => $data['taxon'],
+                ]
+            )
+        );
     }
 }
